@@ -113,8 +113,8 @@ function assertValidEncoding(buffer, qEncoding) {
       // 822, sections 3.1.2 and 3.1.3)
 
       // In this case [`phrase`] the set of characters that may be used in a
-      // "Q"-encoded 'encoded-word' is restricted to: <upper and lower case ASCII
-      // letters, decimal digits, "!", "*", "+", "-", "/", "=", and "_"
+      // "Q"-encoded 'encoded-word' is restricted to: <upper and lower case
+      // ASCII letters, decimal digits, "!", "*", "+", "-", "/", "=", and "_"
       // (underscore, ASCII 95.)>.
       if (
         (code >= 48 && code <= 57) ||  // 0-9
@@ -428,9 +428,10 @@ bindingNames.forEach(
       'qEncoding=true: decode "_"'
     );
 
-    // An implementation might decide to add a soft line break instead of replacing
-    // trailing space with a symbol. This would add an extra 3 bytes (in addition to
-    // the 1 byte for the space) and overflow a simple 3x target buffer allocation.
+    // An implementation might decide to add a soft line break instead of
+    // replacing trailing space with a symbol. This would add an extra 3 bytes
+    // (in addition to the 1 byte for the space) and overflow a simple 3x target
+    // buffer allocation.
     Test.equal(
       qp.encode(
         Buffer.from(' ', 'ascii'),
@@ -575,7 +576,9 @@ bindingNames.forEach(
           );
         } catch (error) {
           if (source) {
-            console.log('  Source: ' + JSON.stringify(source.toString('binary')));
+            console.log(
+              '  Source: ' + JSON.stringify(source.toString('binary'))
+            );
           }
           if (decoding) {
             console.log('');
@@ -597,7 +600,9 @@ bindingNames.forEach(
           }
           if (encoding) {
             console.log('');
-            console.log('Encoding: ' + JSON.stringify(encoding.toString('binary')));
+            console.log(
+              'Encoding: ' + JSON.stringify(encoding.toString('binary'))
+            );
           }
           if (encodingPadding) {
             console.log('');

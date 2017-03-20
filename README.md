@@ -1,5 +1,5 @@
 # quoted-printable
-Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding. Avoids intermediary string allocations. Avoids regular expressions. Avoids branching through the use of lookup tables. Ships with extensive tests, including a fuzz-test.
+Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding. Avoids intermediary string allocations and regular expressions. Reduces branching through the use of lookup tables.
 
 ## Installation
 
@@ -110,8 +110,6 @@ console.log(buffer.toString('utf-8'));
 ```
 
 ## Tests
-`@ronomon/quoted-printable` ships with extensive tests, including a fuzz test.
-
 To test the native and Javascript bindings:
 ```
 node test.js
