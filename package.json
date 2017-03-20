@@ -14,7 +14,7 @@
     "rfc 2045",
     "rfc 2047"
   ],
-  "author": "Ronomon",
+  "author": "Joran Dirk Greef",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ronomon/quoted-printable/issues"
