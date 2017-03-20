@@ -24,7 +24,7 @@
     "test": "node test.js"
   },
   "dependencies": {
-    "nan": "^2.5.1",
-    "ronomon-queue": "^0.1.1"
+    "@ronomon/queue": "^2.1.0",
+    "nan": "^2.5.1"
   }
 }

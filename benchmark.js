@@ -4,7 +4,7 @@ var cores = cpus.length;
 var concurrency = 1;
 
 var QuotedPrintable = require('./index.js');
-var Queue = require('ronomon-queue');
+var Queue = require('@ronomon/queue');
 
 var RNG = function(seed) {
   var self = this;
