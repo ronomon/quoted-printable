@@ -127,7 +127,7 @@ function benchmark(binding, method, buffers, end) {
     // Rest between benchmarks to leave room for GC:
     setTimeout(end, 100);
   };
-  queue.push(buffers);
+  queue.concat(buffers);
   queue.end();
 }
 
@@ -160,11 +160,11 @@ queue.onData = function(method, end) {
       benchmark(binding, method, buffers, end);
     };
     queue.onEnd = end;
-    queue.push(bindings);
+    queue.concat(bindings);
     queue.end();
   };
   queue.onEnd = end;
-  queue.push(sizes);
+  queue.concat(sizes);
   queue.end();
 };
 queue.onEnd = function(error) {
