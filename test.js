@@ -200,7 +200,7 @@ function generateBuffer() {
   if (random() < 0.01) {
     var length = 0;
   } else {
-    var length = Math.ceil(random() * 10);
+    var length = Math.ceil(random() * 100);
   }
   while (length--) lines.push(generateLine());
   var crlf = CRLFS[Math.floor(random() * CRLFS.length)];

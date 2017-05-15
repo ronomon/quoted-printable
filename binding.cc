@@ -8,10 +8,11 @@ uint32_t ceil_div(uint32_t x, uint32_t y) {
 void encodeSoftLineBreak(
   uint8_t* target,
   uint32_t &targetIndex,
+  const uint8_t qEncoding,
   uint32_t &line,
   const uint8_t size
 ) {
-  if (line + size >= 76) {
+  if (line + size >= 76 && !qEncoding) {
     target[targetIndex++] = 61;
     target[targetIndex++] = 13;
     target[targetIndex++] = 10;
@@ -28,7 +29,7 @@ void encodeSymbol(
   uint32_t &line,
   uint8_t code
 ) {
-  if (!qEncoding) encodeSoftLineBreak(target, targetIndex, line, 3);
+  encodeSoftLineBreak(target, targetIndex, qEncoding, line, 3);
   target[targetIndex++] = 61;
   target[targetIndex++] = tableEncoding[(code << 1)];
   target[targetIndex++] = tableEncoding[(code << 1) + 1];
@@ -238,6 +239,7 @@ NAN_METHOD(encode) {
       encodeSoftLineBreak(
         target,
         targetIndex,
+        qEncoding,
         line,
         1
       );
