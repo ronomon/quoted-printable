@@ -27,7 +27,7 @@ QuotedPrintable.binding = {};
 QuotedPrintable.binding.javascript = {};
 
 QuotedPrintable.binding.javascript.decode = function(
-  source, target, qEncoding, tableDecoding
+  source, target, qEncoding, tableDecoding, tableLegal
 ) {
   if (!Buffer.isBuffer(source)) {
     throw new Error('source must be a buffer');
@@ -42,17 +42,23 @@ QuotedPrintable.binding.javascript.decode = function(
   ) {
     throw new Error('qEncoding must be a positive integer');
   }
-  if (qEncoding !== 0 && qEncoding !== 1) {
-    throw new Error('qEncoding must be 0 or 1');
-  }
   if (!Buffer.isBuffer(tableDecoding)) {
     throw new Error('tableDecoding must be a buffer');
+  }
+  if (!Buffer.isBuffer(tableLegal)) {
+    throw new Error('tableLegal must be a buffer');
   }
   if (target.length < source.length) {
     throw new Error('target too small');
   }
+  if (qEncoding !== 0 && qEncoding !== 1) {
+    throw new Error('qEncoding must be 0 or 1');
+  }
   if (tableDecoding.length !== 256) {
     throw new Error('tableDecoding must be 256 bytes');
+  }
+  if (tableLegal.length !== 256) {
+    throw new Error('tableLegal must be 256 bytes');
   }
 
   function removeTransportPaddingThenTestSoftLineBreak() {
@@ -131,9 +137,12 @@ QuotedPrintable.binding.javascript.decode = function(
       // Replace "_" with " " (independent of charset):
       target[targetIndex++] = 32;
       sourceIndex++;
-    } else {
+    } else if (tableLegal[source[sourceIndex]]) {
       // Literal:
       target[targetIndex++] = source[sourceIndex++];
+    } else {
+      // Illegal:
+      throw new Error('illegal character');
     }
   }
   removeTransportPaddingThenTestSoftLineBreak();
@@ -284,7 +293,8 @@ QuotedPrintable.decode = function(source, options) {
     source,
     target,
     qEncoding,
-    self.tableDecoding
+    self.tableDecoding,
+    self.tableLegal
   );
   if (targetSize > target.length) {
     throw new Error('target overflow');
@@ -369,6 +379,14 @@ QuotedPrintable.generateTableEncoding = function() {
   return table;
 };
 
+QuotedPrintable.generateTableLegal = function() {
+  var self = this;
+  var table = self.generateTableLiterals();
+  table[61] = 1; // "="
+  table[95] = 1; // "_"
+  return table;
+};
+
 QuotedPrintable.generateTableLiterals = function() {
   var self = this;
   // This table does the following faster:
@@ -423,6 +441,7 @@ QuotedPrintable.generateTableLiteralsRestricted = function() {
 
 QuotedPrintable.tableDecoding = QuotedPrintable.generateTableDecoding();
 QuotedPrintable.tableEncoding = QuotedPrintable.generateTableEncoding();
+QuotedPrintable.tableLegal = QuotedPrintable.generateTableLegal();
 QuotedPrintable.tableLiterals = QuotedPrintable.generateTableLiterals();
 QuotedPrintable.tableLiteralsRestricted = (
   QuotedPrintable.generateTableLiteralsRestricted()

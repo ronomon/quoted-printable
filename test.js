@@ -207,31 +207,18 @@ function generateBuffer() {
   return Buffer.from(lines.join(crlf), 'binary');
 }
 
-function generateLine() {
-  var tokens = [];
-  var length = Math.ceil(random() * 5);
-  while (length--) tokens.push(generateToken());
-  return tokens.join(' ');
+var illegals = [];
+for (var code = 0; code < 32; code++) {
+  if (code === 9) continue;
+  if (code === 10) continue;
+  if (code === 13) continue;
+  illegals.push(code);
+}
+for (var code = 127; code < 256; code++) {
+  illegals.push(code);
 }
 
-function generateSuffix() {
-  // An "=" followed by a character that is neither a
-  // hexadecimal digit (including "abcdef") nor the CR
-  // character of a CRLF pair is illegal. This case can be
-  // the result of US-ASCII text having been included in a
-  // quoted-printable part of a message without itself
-  // having been subjected to quoted-printable encoding. A
-  // reasonable approach by a robust implementation might be
-  // to include the "=" character and the following
-  // character in the decoded data without any
-  // transformation and, if possible, indicate to the user
-  // that proper decoding was not possible at this point in
-  // the data.
-  //
-  // An "=" cannot be the ultimate or penultimate character
-  // in an encoded object. This could be handled as in case
-  // above.
-  //
+function generateIllegal(buffer) {
   // Control characters other than TAB, or CR and LF as
   // parts of CRLF pairs, must not appear. The same is true
   // for octets with decimal values greater than 126. If
@@ -239,9 +226,26 @@ function generateSuffix() {
   // robust implementation might exclude them from the
   // decoded data and warn the user that illegal characters
   // were discovered.
+  var count = 1 + Math.floor(random() * 16);
+  while (count--) {
+    var index = Math.floor(random() * buffer.length);
+    var head = buffer.slice(0, index);
+    var code = illegals[Math.floor(random() * illegals.length)];
+    var tail = buffer.slice(index);
+    buffer = Buffer.concat([
+      head,
+      Buffer.from([code]),
+      tail
+    ]);
+  }
+  return buffer;
+}
 
-  // We handle illegal characters in the same way as the first two cases.
-  return Buffer.from('=0Z\f==', 'ascii');
+function generateLine() {
+  var tokens = [];
+  var length = Math.ceil(random() * 5);
+  while (length--) tokens.push(generateToken());
+  return tokens.join(' ');
 }
 
 function generateToken() {
@@ -296,11 +300,11 @@ var empty = Buffer.alloc(0);
 var exceptions = {
   decode: [
     {
-      args: [[], empty, 0, qp.tableDecoding],
+      args: [[], empty, 0, qp.tableDecoding, qp.tableLegal],
       error: 'source must be a buffer'
     },
     {
-      args: [empty, [], 0, qp.tableDecoding],
+      args: [empty, [], 0, qp.tableDecoding, qp.tableLegal],
       error: 'target must be a buffer'
     },
     {
@@ -308,29 +312,38 @@ var exceptions = {
         Buffer.alloc(1),
         empty,
         0,
-        qp.tableDecoding
+        qp.tableDecoding,
+        qp.tableLegal
       ],
       error: 'target too small'
     },
     {
-      args: [empty, empty, '0', qp.tableDecoding],
+      args: [empty, empty, '0', qp.tableDecoding, qp.tableLegal],
       error: 'qEncoding must be a positive integer'
     },
     {
-      args: [empty, empty, -1, qp.tableDecoding],
+      args: [empty, empty, -1, qp.tableDecoding, qp.tableLegal],
       error: 'qEncoding must be a positive integer'
     },
     {
-      args: [empty, empty, 2, qp.tableDecoding],
+      args: [empty, empty, 2, qp.tableDecoding, qp.tableLegal],
       error: 'qEncoding must be 0 or 1'
     },
     {
-      args: [empty, empty, 0, []],
+      args: [empty, empty, 0, [], qp.tableLegal],
       error: 'tableDecoding must be a buffer'
     },
     {
-      args: [empty, empty, 0, empty],
+      args: [empty, empty, 0, empty, qp.tableLegal],
       error: 'tableDecoding must be 256 bytes'
+    },
+    {
+      args: [empty, empty, 0, qp.tableDecoding, []],
+      error: 'tableLegal must be a buffer'
+    },
+    {
+      args: [empty, empty, 0, qp.tableDecoding, empty],
+      error: 'tableLegal must be 256 bytes'
     }
   ],
   encode: [
@@ -480,6 +493,26 @@ bindingNames.forEach(
       'decode("")'
     );
 
+    Test.equal(
+      qp.decode(
+        Buffer.from('=0Z==', 'ascii'),
+        { binding: binding, qEncoding: false }
+      ).toString('binary'),
+      '=0Z==',
+      namespace,
+      'decode(false positive)'
+    );
+
+    Test.equal(
+      qp.decode(
+        Buffer.from('=0Z==', 'ascii'),
+        { binding: binding, qEncoding: true }
+      ).toString('binary'),
+      '=0Z==',
+      namespace,
+      'decode(false positive)'
+    );
+
     sources.forEach(
       function(source) {
         try {
@@ -559,18 +592,16 @@ bindingNames.forEach(
             namespace,
             'decodingPadding'
           );
-          var illegalSuffix = generateSuffix();
-          var encodingIllegal = Buffer.concat([encoding, illegalSuffix]);
-          var decodingIllegal = qp.decode(encodingIllegal, options);
+          var encodingIllegal = generateIllegal(encoding);
+          try {
+            var decodingIllegal = qp.decode(encodingIllegal, options);
+            var decodingIllegalException = null;
+          } catch (error) {
+            var decodingIllegalException = error;
+          }
           Test.equal(
-            decodingIllegal.length,
-            source.length + illegalSuffix.length,
-            namespace,
-            'decodingIllegal.length'
-          );
-          Test.equal(
-            hash(decodingIllegal),
-            hash(Buffer.concat([source, illegalSuffix])),
+            decodingIllegalException.message,
+            'illegal character',
             namespace,
             'decodingIllegal'
           );

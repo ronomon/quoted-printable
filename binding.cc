@@ -64,7 +64,7 @@ void encodeTrailingSpace(
 }
 
 NAN_METHOD(decode) {
-  if (info.Length() != 4) {
+  if (info.Length() != 5) {
     return Nan::ThrowError("bad number of arguments");
   }
   if (!node::Buffer::HasInstance(info[0])) {
@@ -79,10 +79,14 @@ NAN_METHOD(decode) {
   if (!node::Buffer::HasInstance(info[3])) {
     return Nan::ThrowError("tableDecoding must be a buffer");
   }
+  if (!node::Buffer::HasInstance(info[4])) {
+    return Nan::ThrowError("tableLegal must be a buffer");
+  }
   v8::Local<v8::Object> sourceHandle = info[0].As<v8::Object>();
   v8::Local<v8::Object> targetHandle = info[1].As<v8::Object>();
   const uint8_t qEncoding = info[2]->Uint32Value();
   v8::Local<v8::Object> tableDecodingHandle = info[3].As<v8::Object>();
+  v8::Local<v8::Object> tableLegalHandle = info[4].As<v8::Object>();
   const uint32_t sourceLength = node::Buffer::Length(sourceHandle);
   const uint32_t targetLength = node::Buffer::Length(targetHandle);
   if (targetLength < sourceLength) {
@@ -94,6 +98,9 @@ NAN_METHOD(decode) {
   if (node::Buffer::Length(tableDecodingHandle) != 256) {
     return Nan::ThrowError("tableDecoding must be 256 bytes");
   }
+  if (node::Buffer::Length(tableLegalHandle) != 256) {
+    return Nan::ThrowError("tableLegal must be 256 bytes");
+  }
   const uint8_t* source = reinterpret_cast<const uint8_t*>(
     node::Buffer::Data(sourceHandle)
   );
@@ -102,6 +109,9 @@ NAN_METHOD(decode) {
   );
   const uint8_t* tableDecoding = reinterpret_cast<const uint8_t*>(
     node::Buffer::Data(tableDecodingHandle)
+  );
+  const uint8_t* tableLegal = reinterpret_cast<const uint8_t*>(
+    node::Buffer::Data(tableLegalHandle)
   );
   uint8_t crlf = 0;
   uint32_t rewindIndex = 0;
@@ -157,9 +167,12 @@ NAN_METHOD(decode) {
       // Replace "_" with " " (independent of charset):
       target[targetIndex++] = 32;
       sourceIndex++;
-    } else {
+    } else if (tableLegal[source[sourceIndex]]) {
       // Literal:
       target[targetIndex++] = source[sourceIndex++];
+    } else {
+      // Illegal:
+      return Nan::ThrowError("illegal character");
     }
   }
   // Remove transport padding:
