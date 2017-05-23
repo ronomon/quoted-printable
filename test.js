@@ -134,7 +134,7 @@ function assertValidEncoding(buffer, qEncoding) {
         // We choose to allow "(" or ")" when asserting validity.
         // They are not allowed for comments (possibly within address fields).
         // They are allowed for *text headers such as "Subject".
-        // If we were to raise an exception instead, it might a false positive.
+        // If we were to raise an exception instead, it may be a false positive.
       } else {
         throw new Error(
           'Code ' + code + ' must not appear as a literal in Q-encoding.'
@@ -655,5 +655,5 @@ bindingNames.forEach(
 );
 console.log('Bindings Tested: ' + bindingNames.join(', '));
 console.log('================');
-console.log('ALL TESTS PASSED');
+console.log('PASSED ALL TESTS');
 console.log('================');
