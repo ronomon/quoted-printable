@@ -1,6 +1,6 @@
 {
   "name": "@ronomon/quoted-printable",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding.",
   "main": "index.js",
   "repository": {
