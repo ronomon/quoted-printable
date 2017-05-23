@@ -513,6 +513,16 @@ bindingNames.forEach(
       'decode(false positive)'
     );
 
+    Test.equal(
+      qp.decode(
+        Buffer.from('=0', 'ascii'),
+        { binding: binding, qEncoding: false }
+      ).toString('binary'),
+      '=0',
+      namespace,
+      'decode(truncated)'
+    );
+
     sources.forEach(
       function(source) {
         try {
