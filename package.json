@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ronomon/quoted-printable#readme",
   "scripts": {
+    "postinstall": "node-gyp clean",
     "test": "node test.js"
   },
   "dependencies": {

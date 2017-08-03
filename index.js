@@ -267,7 +267,7 @@ QuotedPrintable.binding.javascript.encode = function(
 };
 
 try {
-  QuotedPrintable.binding.native = require('./build/Release/binding.node');
+  QuotedPrintable.binding.native = require('./binding.node');
   QuotedPrintable.binding.active = QuotedPrintable.binding.native;
 } catch (exception) {
   // We use the Javascript binding if the native binding has not been compiled.
