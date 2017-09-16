@@ -142,7 +142,8 @@ QuotedPrintable.binding.javascript.decode = function(
       target[targetIndex++] = source[sourceIndex++];
     } else {
       // Illegal:
-      throw new Error('illegal character');
+      sourceIndex++;
+      // throw new Error('illegal character');
     }
   }
   removeTransportPaddingThenTestSoftLineBreak();

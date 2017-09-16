@@ -172,7 +172,8 @@ NAN_METHOD(decode) {
       target[targetIndex++] = source[sourceIndex++];
     } else {
       // Illegal:
-      return Nan::ThrowError("illegal character");
+      sourceIndex++;
+      // return Nan::ThrowError("illegal character");
     }
   }
   // Remove transport padding:
