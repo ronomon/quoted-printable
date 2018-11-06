@@ -3,6 +3,13 @@
   "version": "3.2.0",
   "description": "Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding.",
   "main": "index.js",
+  "files": [
+    "benchmark.js",
+    "binding.cc",
+    "binding.gyp",
+    "index.js",
+    "test.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ronomon/quoted-printable.git"
