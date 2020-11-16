@@ -84,7 +84,7 @@ NAN_METHOD(decode) {
   }
   v8::Local<v8::Object> sourceHandle = info[0].As<v8::Object>();
   v8::Local<v8::Object> targetHandle = info[1].As<v8::Object>();
-  const uint8_t qEncoding = info[2]->Uint32Value();
+  const uint8_t qEncoding = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   v8::Local<v8::Object> tableDecodingHandle = info[3].As<v8::Object>();
   v8::Local<v8::Object> tableLegalHandle = info[4].As<v8::Object>();
   const uint32_t sourceLength = node::Buffer::Length(sourceHandle);
@@ -216,7 +216,7 @@ NAN_METHOD(encode) {
   }
   v8::Local<v8::Object> sourceHandle = info[0].As<v8::Object>();
   v8::Local<v8::Object> targetHandle = info[1].As<v8::Object>();
-  const uint8_t qEncoding = info[2]->Uint32Value();
+  const uint8_t qEncoding = info[2]->Uint32Value(Nan::GetCurrentContext()).FromJust();
   v8::Local<v8::Object> tableEncodingHandle = info[3].As<v8::Object>();
   v8::Local<v8::Object> tableLiteralsHandle = info[4].As<v8::Object>();
   const uint32_t sourceLength = node::Buffer::Length(sourceHandle);
