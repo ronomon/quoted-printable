@@ -1,7 +1,7 @@
 {
-  "name": "@ronomon/quoted-printable",
+  "name": "@vlasky/quoted-printable",
   "version": "3.2.1",
-  "description": "Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding.",
+  "description": "Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding. A fork of @ronomon/quoted-printable that supports Node.js v12.",
   "main": "index.js",
   "files": [
     "benchmark.js",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ronomon/quoted-printable.git"
+    "url": "git+https://github.com/vlasky/quoted-printable.git"
   },
   "keywords": [
     "quoted-printable",
@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/ronomon/quoted-printable/issues"
   },
-  "homepage": "https://github.com/ronomon/quoted-printable#readme",
+  "homepage": "https://github.com/vlasky/quoted-printable#readme",
   "scripts": {
     "postinstall": "node-gyp clean",
     "test": "node test.js"

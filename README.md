@@ -1,18 +1,18 @@
 # quoted-printable
-Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding. Avoids intermediary string allocations and regular expressions. Reduces branching through the use of lookup tables.
+Fast, robust RFC 2045 (Quoted-Printable) and RFC 2047 (Q-Encoding) encoder/decoder for Buffers in pure Javascript with an optional C++ binding. Avoids intermediary string allocations and regular expressions. Reduces branching through the use of lookup tables. This is a fork of [@ronomon/quoted-printable](https://github.com/ronomon/quoted-printable/) modified to support Node.js v12.
 
 ## Installation
 
 #### Linux, OS X
 This will compile the native binding automatically:
 ```
-npm install @ronomon/quoted-printable
+npm install @vlasky/quoted-printable
 ```
 
 #### Windows
 This will skip compiling the native binding automatically:
 ```
-npm install --ignore-scripts @ronomon/quoted-printable
+npm install --ignore-scripts @vlasky/quoted-printable
 ```
 
 ## Performance
@@ -75,13 +75,13 @@ npm install --ignore-scripts @ronomon/quoted-printable
 ```
 
 ## Native Binding (Optional)
-The native binding will be installed automatically when installing `@ronomon/quoted-printable` without the `--ignore-scripts` argument. The Javascript binding will be used if the native binding could not be compiled or is not available. To compile the native binding manually after installing, install [node-gyp](https://www.npmjs.com/package/node-gyp) globally:
+The native binding will be installed automatically when installing `@vlasky/quoted-printable` without the `--ignore-scripts` argument. The Javascript binding will be used if the native binding could not be compiled or is not available. To compile the native binding manually after installing, install [node-gyp](https://www.npmjs.com/package/node-gyp) globally:
 ```
 sudo npm install node-gyp -g
 ```
-Then build the binding from within the `@ronomon/quoted-printable` module directory:
+Then build the binding from within the `@vlasky/quoted-printable` module directory:
 ```
-cd node_modules/@ronomon/quoted-printable
+cd node_modules/@vlasky/quoted-printable
 node-gyp rebuild
 ```
 
@@ -89,7 +89,7 @@ node-gyp rebuild
 
 #### Encoding
 ```javascript
-var QuotedPrintable = require('@ronomon/quoted-printable');
+var QuotedPrintable = require('@vlasky/quoted-printable');
 var string = ' = ';
 var options = { qEncoding: false };
 var buffer = Buffer.from(string, 'utf-8');
@@ -100,7 +100,7 @@ console.log(bufferEncoded.toString('ascii'));
 
 #### Decoding
 ```javascript
-var QuotedPrintable = require('@ronomon/quoted-printable');
+var QuotedPrintable = require('@vlasky/quoted-printable');
 var string = ' =3D=20';
 var options = { qEncoding: false };
 var bufferEncoded = Buffer.from(string, 'ascii');
